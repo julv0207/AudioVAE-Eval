@@ -1,0 +1,38 @@
+models:
+  - audioldm2
+  - mmaudio-44k
+  - stable-audio-open
+  - same-s
+  - same-l
+  - woosh-ae
+
+device: cuda
+dtype: float32
+deterministic: true
+
+audio:
+  extensions: [".wav", ".flac", ".ogg", ".mp3"]
+  trim_to_reference: true
+
+metrics:
+  visqol:
+    enabled: true
+    executable: third_party/visqol/bazel-bin/visqol
+    sample_rate: 48000
+  si_sdr:
+    zero_mean: false
+  stft_log1p:
+    fft_sizes: [128, 256, 512, 1024, 2048, 4096]
+  mel_log1p:
+    fft_sizes: [1024, 2048, 4096]
+    n_mels: 64
+  spectral:
+    fft_sizes: [64, 128, 256, 512, 1024, 2048]
+  bands:
+    - {name: "0-2k", min_hz: 0, max_hz: 2000}
+    - {name: "2k-4k", min_hz: 2000, max_hz: 4000}
+    - {name: "4k-8k", min_hz: 4000, max_hz: 8000}
+    - {name: "8k-16k", min_hz: 8000, max_hz: 16000}
+    - {name: "16k-nyquist", min_hz: 16000, max_hz: null}
+
+output_dir: outputs
