@@ -170,7 +170,6 @@ def create_environments(names: list[str]) -> None:
         if not environment.exists():
             run(["uv", "venv", "--python", python, str(environment)])
         pip = ["uv", "pip", "install", "--python", str(environment / "bin" / "python")]
-        run(pip + list(spec["packages"]))
         source_name = {
             "mmaudio": "mmaudio",
             "same": "stable-audio-3",
@@ -179,6 +178,9 @@ def create_environments(names: list[str]) -> None:
         source = THIRD_PARTY / source_name if source_name else None
         if source is not None and source.is_dir():
             run(pip + ["-e", str(source)])
+        # Install explicit runtime pins last because upstream editable packages may
+        # otherwise upgrade Torch independently of Torchaudio.
+        run(pip + list(spec["packages"]))
         run(pip + ["-e", str(ROOT), "--no-deps"])
 
 
