@@ -56,26 +56,23 @@ def evaluate_pair(
             reference, estimate, sample_rate, max_hz=2_000, fft_sizes=fft_sizes
         )
     )
-    result["stft_hf8"] = _number(
-        multiresolution_stft_distance(
-            reference,
-            estimate,
-            sample_rate,
-            min_hz=8_000,
-            fft_sizes=fft_sizes,
-            min_inclusive=False,
+    for cutoff_hz in metrics["spectral"].get("hf_cutoffs_hz", (8_000, 16_000)):
+        cutoff_hz = float(cutoff_hz)
+        label = (
+            f"{int(cutoff_hz / 1000)}"
+            if cutoff_hz % 1000 == 0
+            else f"{cutoff_hz:g}hz"
         )
-    )
-    result["stft_hf16"] = _number(
-        multiresolution_stft_distance(
-            reference,
-            estimate,
-            sample_rate,
-            min_hz=16_000,
-            fft_sizes=fft_sizes,
-            min_inclusive=False,
+        result[f"stft_hf{label}"] = _number(
+            multiresolution_stft_distance(
+                reference,
+                estimate,
+                sample_rate,
+                min_hz=cutoff_hz,
+                fft_sizes=fft_sizes,
+                min_inclusive=False,
+            )
         )
-    )
     for band in metrics["bands"]:
         name = str(band["name"])
         min_hz = band.get("min_hz")

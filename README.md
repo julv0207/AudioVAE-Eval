@@ -74,6 +74,42 @@ metric으로 기록됩니다. Oobleck/Woosh/SAME decoder는 waveform을 직접 �
 
 설정과 대역 경계는 `configs/eval.yaml`에서 바꿀 수 있습니다.
 
+## 평가 데이터셋 준비
+
+다음 명령은 AudioCaps test와 NC-AI HF-rich 세트를 44.1 kHz, 정확히 10초로
+만듭니다. 짧은 파일은 뒤를 zero-padding하고 긴 파일은 첫 10초 뒤를 자릅니다.
+
+```bash
+python scripts/prepare_eval_datasets.py \
+  --thresholds configs/nc_ai_hf_thresholds.json \
+  --limit 1000
+```
+
+생성 결과:
+
+- `datasets/audiocaps_test/clips`: AudioCaps test 고유 오디오 964개
+- `datasets/nc_ai_hf_rich/hf8k`: 8 kHz 이상 HF-rich 1,000개
+- `datasets/nc_ai_hf_rich/hf16k`: 16 kHz 이상 HF-rich 1,000개
+
+NC-AI 선별은 2,048 FFT/1,024 hop에서 고주파 에너지 비율, 절대 고주파
+에너지(dBFS), `-80 dBFS` 이상 고주파가 존재하는 프레임 비율을 함께 사용합니다.
+분포와 선택 결과는 `distribution_summary.json`, `selection_summary.json`에 기록됩니다.
+
+HF8/HF16 전용 metric은 해당 세트에서만 계산하고, 나머지 metric은 두 세트에서
+각각 계산할 수 있습니다.
+
+```bash
+audio-vae-eval evaluate \
+  --input datasets/nc_ai_hf_rich/hf8k \
+  --hf-cutoffs 8000 \
+  --output outputs/nc_ai_hf8
+
+audio-vae-eval evaluate \
+  --input datasets/nc_ai_hf_rich/hf16k \
+  --hf-cutoffs 16000 \
+  --output outputs/nc_ai_hf16
+```
+
 ## 라이선스
 
 이 프레임워크 코드는 MIT입니다. 내려받은 각 모델과 가중치에는 각 원 프로젝트의

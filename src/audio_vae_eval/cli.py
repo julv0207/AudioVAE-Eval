@@ -194,6 +194,8 @@ def command_evaluate(args: argparse.Namespace) -> int:
     config = load_config(args.config)
     if args.no_visqol:
         config["metrics"]["visqol"]["enabled"] = False
+    if args.hf_cutoffs:
+        config["metrics"]["spectral"]["hf_cutoffs_hz"] = args.hf_cutoffs
     files = discover_audio(args.input, config["audio"]["extensions"])
     records = []
     for model in requested_models(args.models or config.get("models")):
@@ -294,6 +296,12 @@ def build_parser() -> argparse.ArgumentParser:
     add_run_arguments(evaluate)
     evaluate.add_argument("--resume", action=argparse.BooleanOptionalAction, default=True)
     evaluate.add_argument("--no-visqol", action="store_true")
+    evaluate.add_argument(
+        "--hf-cutoffs",
+        type=float,
+        nargs="+",
+        help="STFT-HF cutoff frequencies in Hz (for example: 8000 or 16000)",
+    )
     evaluate.set_defaults(function=command_evaluate)
     report = subparsers.add_parser("report")
     report.add_argument("--results", type=Path, required=True)

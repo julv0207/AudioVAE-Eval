@@ -3,6 +3,7 @@
 checkpoints/
 third_party/
 outputs/
+datasets/
 __pycache__/
 .pytest_cache/
 *.pyc

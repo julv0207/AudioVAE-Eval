@@ -28,6 +28,7 @@ metrics:
     n_mels: 64
   spectral:
     fft_sizes: [64, 128, 256, 512, 1024, 2048]
+    hf_cutoffs_hz: [8000, 16000]
   bands:
     - {name: "0-2k", min_hz: 0, max_hz: 2000}
     - {name: "2k-4k", min_hz: 2000, max_hz: 4000}

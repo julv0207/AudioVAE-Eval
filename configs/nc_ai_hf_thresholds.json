@@ -1,0 +1,12 @@
+{
+  "8k": {
+    "energy_ratio": 0.0005,
+    "absolute_energy_dbfs": -60.0,
+    "active_time_ratio": 0.5
+  },
+  "16k": {
+    "energy_ratio": 0.000007,
+    "absolute_energy_dbfs": -77.0,
+    "active_time_ratio": 0.3
+  }
+}
